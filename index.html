@@ -52,6 +52,67 @@
         </div>
     </section>
 
+    <!-- Resume Section -->
+    <section class="resume">
+        <div class="container">
+            <h2 class="section-title fade-in">My Resume</h2>
+            <p class="section-subtitle fade-in">Download or view my professional background and experience</p>
+            
+            <div class="resume-viewer fade-in" data-delay="100">
+                <div class="resume-container">
+                    <div class="resume-image-container">
+                        <img id="resume-image" src="assets/resume/resume-page-1.jpg" alt="Resume Page 1" class="resume-image">
+                        <div class="resume-loading" id="resume-loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading resume...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="resume-controls">
+                        <button id="prev-page" class="btn btn-nav" disabled>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                            Previous
+                        </button>
+                        
+                        <div class="page-indicator">
+                            <span id="current-page">1</span> / <span id="total-pages">1</span>
+                        </div>
+                        
+                        <button id="next-page" class="btn btn-nav" disabled>
+                            Next
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="resume-actions">
+                    <a href="Athvaith_k.pdf" download="Athvaith_K_Resume.pdf" class="btn btn-primary" id="download-resume">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7,10 12,15 17,10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download PDF
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Scroll indicator -->
+            <div class="scroll-indicator fade-in" data-delay="200">
+                <p>Check out my projects below</p>
+                <div class="scroll-arrow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Projects Section -->
     <section class="projects">
         <div class="container">

@@ -303,6 +303,227 @@ function initLoadingAnimation() {
 }
 
 // ==========================================
+// Resume Viewer System
+// ==========================================
+
+class ResumeViewer {
+    constructor() {
+        this.currentPage = 1;
+        this.totalPages = 1;
+        this.images = [];
+        this.isLoading = false;
+        this.init();
+    }
+
+    init() {
+        this.detectResumePages();
+        this.bindEvents();
+        this.updateControls();
+    }
+
+    detectResumePages() {
+        // Try to detect available resume pages
+        const basePath = 'assets/resume/resume-page-';
+        const extensions = ['jpg', 'jpeg', 'png'];
+        
+        // Check for multiple pages by testing image existence
+        this.checkImageExists(`${basePath}2.jpg`).then(exists => {
+            if (exists) {
+                this.totalPages = 2;
+                this.updateControls();
+            }
+        });
+
+        this.checkImageExists(`${basePath}3.jpg`).then(exists => {
+            if (exists) {
+                this.totalPages = 3;
+                this.updateControls();
+            }
+        });
+    }
+
+    async checkImageExists(url) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(false);
+            img.src = url;
+        });
+    }
+
+    bindEvents() {
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+        const downloadBtn = document.getElementById('download-resume');
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => this.previousPage());
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => this.nextPage());
+        }
+
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', () => this.trackDownload());
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.target.closest('.resume-viewer')) {
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    this.previousPage();
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    this.nextPage();
+                }
+            }
+        });
+
+        // Touch/swipe support for mobile
+        this.addSwipeSupport();
+    }
+
+    addSwipeSupport() {
+        const container = document.querySelector('.resume-image-container');
+        if (!container) return;
+
+        let startX = 0;
+        let startY = 0;
+
+        container.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+
+        container.addEventListener('touchend', (e) => {
+            if (!startX || !startY) return;
+
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            const diffX = startX - endX;
+            const diffY = startY - endY;
+
+            // Only trigger if horizontal swipe is more significant than vertical
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (diffX > 0) {
+                    this.nextPage();
+                } else {
+                    this.previousPage();
+                }
+            }
+
+            startX = 0;
+            startY = 0;
+        });
+    }
+
+    async loadPage(pageNumber) {
+        if (this.isLoading) return;
+        
+        this.isLoading = true;
+        this.showLoading();
+
+        const imagePath = `assets/resume/resume-page-${pageNumber}.jpg`;
+        const img = new Image();
+
+        img.onload = () => {
+            const resumeImage = document.getElementById('resume-image');
+            if (resumeImage) {
+                resumeImage.src = imagePath;
+                resumeImage.alt = `Resume Page ${pageNumber}`;
+                resumeImage.classList.remove('loading');
+            }
+            this.hideLoading();
+            this.isLoading = false;
+        };
+
+        img.onerror = () => {
+            console.warn(`Resume page ${pageNumber} not found`);
+            this.hideLoading();
+            this.isLoading = false;
+            
+            // If it's the first page and doesn't exist, show a placeholder
+            if (pageNumber === 1) {
+                this.showPlaceholder();
+            }
+        };
+
+        img.src = imagePath;
+    }
+
+    showLoading() {
+        const loading = document.getElementById('resume-loading');
+        const image = document.getElementById('resume-image');
+        
+        if (loading) loading.classList.add('show');
+        if (image) image.classList.add('loading');
+    }
+
+    hideLoading() {
+        const loading = document.getElementById('resume-loading');
+        const image = document.getElementById('resume-image');
+        
+        if (loading) loading.classList.remove('show');
+        if (image) image.classList.remove('loading');
+    }
+
+    showPlaceholder() {
+        const image = document.getElementById('resume-image');
+        if (image) {
+            image.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDQwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNzUgMjAwSDIyNVYyNTBIMTc1VjIwMFoiIGZpbGw9IiNEMUQ1REIiLz4KPHA+UmVzdW1lIGltYWdlcyB3aWxsIGFwcGVhciBoZXJlPC9wPgo8L3N2Zz4=';
+            image.alt = 'Resume placeholder - Please add resume images to assets/resume/ directory';
+        }
+    }
+
+    previousPage() {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            this.loadPage(this.currentPage);
+            this.updateControls();
+        }
+    }
+
+    nextPage() {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+            this.loadPage(this.currentPage);
+            this.updateControls();
+        }
+    }
+
+    updateControls() {
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+        const currentPageSpan = document.getElementById('current-page');
+        const totalPagesSpan = document.getElementById('total-pages');
+
+        if (prevBtn) {
+            prevBtn.disabled = this.currentPage <= 1;
+        }
+
+        if (nextBtn) {
+            nextBtn.disabled = this.currentPage >= this.totalPages;
+        }
+
+        if (currentPageSpan) {
+            currentPageSpan.textContent = this.currentPage;
+        }
+
+        if (totalPagesSpan) {
+            totalPagesSpan.textContent = this.totalPages;
+        }
+    }
+
+    trackDownload() {
+        console.log('Resume download clicked');
+        // Add your analytics tracking code here
+        // Example: gtag('event', 'download', { 'file_name': 'resume' });
+    }
+}
+
+// ==========================================
 // Initialize Everything
 // ==========================================
 
@@ -346,6 +567,9 @@ function init() {
 
     // Initialize loading animation
     initLoadingAnimation();
+
+    // Initialize resume viewer
+    new ResumeViewer();
 
     // Log initialization
     console.log('🚀 Portfolio initialized successfully!');
