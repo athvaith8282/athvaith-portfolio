@@ -15,8 +15,9 @@ A modern, animated portfolio website showcasing AI Agent projects with LangGraph
 
 Once deployed, your portfolio will be available at:
 ```
-https://athvaith8282.github.io/agent-portfolio/
+https://athvaith8282.github.io/athvaith-portfolio/
 ```
+- [Live Demo](https://athvaith8282.github.io/athvaith-portfolio/)
 
 ## 📋 Projects Included
 
@@ -27,7 +28,7 @@ https://athvaith8282.github.io/agent-portfolio/
 - Real-time streaming
 
 **Links:**
-- [Live Demo](https://personal-assistent.streamlit.app/)
+- [Live Demo](https://personal-assistant-agent.streamlit.app/)
 - [GitHub Repository](https://github.com/athvaith8282/pa_agent)
 
 ### 2. Multi-Agent Researcher
